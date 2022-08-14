@@ -1,0 +1,3 @@
+﻿Yva=function(a){a=a.split("");CB.Pm(a,2);CB.ii(a,1);CB.sS(a,54);CB.ii(a,3);return a.join("")};var CB={sS:function(a){a.reverse()},
+Pm:function(a,b){var c=a[0];a[0]=a[b%a.length];a[b%a.length]=c},
+ii:function(a,b){a.splice(0,b)}}

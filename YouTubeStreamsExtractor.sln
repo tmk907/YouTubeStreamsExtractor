@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32616.157
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YouTubeStreamsExtractor", "YouTubeStreamsExtractor\YouTubeStreamsExtractor.csproj", "{FDD9270C-DC84-4917-B1FE-486F2BEB81C7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YouTubeStreamsExtractor.Tests", "YouTubeStreamsExtractor.Tests\YouTubeStreamsExtractor.Tests.csproj", "{F9F38459-0783-47A5-9EC1-FDDC89C10B63}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FDD9270C-DC84-4917-B1FE-486F2BEB81C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FDD9270C-DC84-4917-B1FE-486F2BEB81C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FDD9270C-DC84-4917-B1FE-486F2BEB81C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FDD9270C-DC84-4917-B1FE-486F2BEB81C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F9F38459-0783-47A5-9EC1-FDDC89C10B63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9F38459-0783-47A5-9EC1-FDDC89C10B63}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9F38459-0783-47A5-9EC1-FDDC89C10B63}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9F38459-0783-47A5-9EC1-FDDC89C10B63}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C2FE8313-30EC-4EFD-9C7F-6AEED7BD9DD0}
+	EndGlobalSection
+EndGlobal
