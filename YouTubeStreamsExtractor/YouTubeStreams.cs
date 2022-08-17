@@ -34,10 +34,6 @@ namespace YouTubeStreamsExtractor
 
         public async Task<YouTubeData> GetPlayerResponseAsync(string url)
         {
-            var r = await _httpClient.GetAsync(url);
-            var h = r.Headers.Select(x => $"{x.Key} - {string.Join(' ', x.Value)}").ToList();
-            var h1 = r.RequestMessage.Headers.Select(x => $"{x.Key} - {string.Join(' ', x.Value)}").ToList();
-
             var response = await _httpClient.GetStringAsync(url);
 
             var token1 = "var ytInitialPlayerResponse = ";
