@@ -1,5 +1,6 @@
 ﻿using YouTubeStreamsExtractor.Models;
 using System.Text.Json;
+using System.Net.Http;
 
 namespace YouTubeStreamsExtractor
 {
@@ -11,6 +12,10 @@ namespace YouTubeStreamsExtractor
         public YouTubeStreams()
         {
             _httpClient = new HttpClient();
+            _httpClient.DefaultRequestHeaders.Clear();
+            _httpClient.DefaultRequestHeaders.Add("Accept", "*/*");
+            _httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36");
+            _httpClient.DefaultRequestHeaders.Add("Cookie", "CONSENT=Yes+cb; YSC=NYW5raUzYP4; ");
             _decryptor = new Decryptor(_httpClient);
         }
 
@@ -29,6 +34,10 @@ namespace YouTubeStreamsExtractor
 
         public async Task<YouTubeData> GetPlayerResponseAsync(string url)
         {
+            var r = await _httpClient.GetAsync(url);
+            var h = r.Headers.Select(x => $"{x.Key} - {string.Join(' ', x.Value)}").ToList();
+            var h1 = r.RequestMessage.Headers.Select(x => $"{x.Key} - {string.Join(' ', x.Value)}").ToList();
+
             var response = await _httpClient.GetStringAsync(url);
 
             var token1 = "var ytInitialPlayerResponse = ";
