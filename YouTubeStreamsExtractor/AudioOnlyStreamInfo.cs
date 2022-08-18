@@ -10,7 +10,7 @@
 
         public int ITag { get; init; }
 
-        public string Url { get; set; }
+        public string RawUrl { get; init; }
 
         public string MimeType { get; init; }
 
@@ -21,5 +21,7 @@
         public TimeSpan Duration { get; init; }
 
         public long ContentLength { get; init; }
+
+        public PlayableUrl PlayableUrl { get; init; }
     }
 }

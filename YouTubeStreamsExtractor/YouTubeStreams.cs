@@ -1,6 +1,6 @@
 ﻿using YouTubeStreamsExtractor.Models;
 using System.Text.Json;
-using System.Net.Http;
+using System.IO;
 
 namespace YouTubeStreamsExtractor
 {
@@ -9,10 +9,16 @@ namespace YouTubeStreamsExtractor
         private readonly HttpClient _httpClient;
         private readonly Decryptor _decryptor;
 
+        public IDecryptor Decryptor => _decryptor;
+
         public YouTubeStreams()
         {
-            _httpClient = new HttpClient();
-            _httpClient.DefaultRequestHeaders.Clear();
+            var msgHandler = new HttpClientHandler()
+            {
+                AutomaticDecompression = System.Net.DecompressionMethods.All
+            };
+            _httpClient = new HttpClient(msgHandler);
+            _httpClient.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate, br");
             _httpClient.DefaultRequestHeaders.Add("Accept", "*/*");
             _httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36");
             _httpClient.DefaultRequestHeaders.Add("Cookie", "CONSENT=Yes+cb; YSC=NYW5raUzYP4; ");
@@ -25,10 +31,16 @@ namespace YouTubeStreamsExtractor
             _decryptor = new Decryptor(_httpClient);
         }
 
-        public async Task<IEnumerable<IStreamInfo>> GetAllStreamsAsync(string url)
+        public YouTubeStreams(HttpClient httpClient, ICache cache)
+        {
+            _httpClient = httpClient;
+            _decryptor = new Decryptor(_httpClient, cache);
+        }
+
+        public async Task<IEnumerable<IStreamInfo>> GetAllStreamsAsync(string url, bool findAllUrls = false)
         {
             var youTubeData = await GetPlayerResponseAsync(url);
-            var streams = await GetAllStreamsAsync(youTubeData);
+            var streams = await GetAllStreamsAsync(youTubeData, findAllUrls);
             return streams;
         }
 
@@ -73,7 +85,7 @@ namespace YouTubeStreamsExtractor
             return youtubeData;
         }
 
-        public async Task<IEnumerable<IStreamInfo>> GetAllStreamsAsync(YouTubeData youTubeData)
+        public async Task<IEnumerable<IStreamInfo>> GetAllStreamsAsync(YouTubeData youTubeData, bool findAllUrls = false)
         {
             var streams = new List<IStreamInfo>();
 
@@ -94,16 +106,10 @@ namespace YouTubeStreamsExtractor
                         Duration = TimeSpan.FromMilliseconds(x.ApproxDurationMs),
                         ITag = x.Itag,
                         MimeType = x.MimeType.Split(';')[0],
-                        Url = x.Url,
+                        RawUrl = x.Url,
+
+                        PlayableUrl = new PlayableUrl(x.SignatureCipher, youTubeData.PlayerUrl)
                     };
-                    if (streamInfo.Url == null)
-                    {
-                        streamInfo.Url = await _decryptor.GetStreamUrl(x.SignatureCipher, youTubeData.PlayerUrl);
-                    }
-                    else
-                    {
-                        streamInfo.Url = await _decryptor.ReplaceNWithDecrypted(streamInfo.Url, youTubeData.PlayerUrl);
-                    }
                     streams.Add(streamInfo);
                 }
 
@@ -117,21 +123,15 @@ namespace YouTubeStreamsExtractor
                         Duration = TimeSpan.FromMilliseconds(x.ApproxDurationMs),
                         ITag = x.Itag,
                         MimeType = x.MimeType.Split(';')[0],
-                        Url = x.Url,
+                        RawUrl = x.Url,
 
                         Fps = x.Fps,
                         Height = x.Height,
                         QualityLabel = x.QualityLabel,
-                        Width = x.Width
+                        Width = x.Width,
+
+                        PlayableUrl = new PlayableUrl(x.SignatureCipher, youTubeData.PlayerUrl)
                     };
-                    if (streamInfo.Url == null)
-                    {
-                        streamInfo.Url = await _decryptor.GetStreamUrl(x.SignatureCipher, youTubeData.PlayerUrl);
-                    }
-                    else
-                    {
-                        streamInfo.Url = await _decryptor.ReplaceNWithDecrypted(streamInfo.Url, youTubeData.PlayerUrl);
-                    }
                     streams.Add(streamInfo);
                 }
             }
@@ -153,27 +153,38 @@ namespace YouTubeStreamsExtractor
                         Duration = TimeSpan.FromMilliseconds(x.ApproxDurationMs),
                         ITag = x.Itag,
                         MimeType = x.MimeType.Split(';')[0],
-                        Url = x.Url,
+                        RawUrl = x.Url,
 
                         Fps = x.Fps,
                         Height = x.Height,
                         QualityLabel = x.QualityLabel,
-                        Width = x.Width
+                        Width = x.Width,
 
+                        PlayableUrl = new PlayableUrl(x.SignatureCipher, youTubeData.PlayerUrl)
                     };
-                    if (streamInfo.Url == null)
-                    {
-                        streamInfo.Url = await _decryptor.GetStreamUrl(x.SignatureCipher, youTubeData.PlayerUrl);
-                    }
-                    else
-                    {
-                        streamInfo.Url = await _decryptor.ReplaceNWithDecrypted(streamInfo.Url, youTubeData.PlayerUrl);
-                    }
                     streams.Add(streamInfo);
                 }
             }
 
+            if (findAllUrls)
+            {
+                foreach (var stream in streams)
+                {
+                    await stream.PlayableUrl.PrepareAsync(stream.RawUrl, _decryptor);
+                }
+            }
+
             return streams;
+        }
+
+        public static void ReplaceReqiredHeaders(HttpClient httpClient)
+        {
+            httpClient.DefaultRequestHeaders.Remove("Accept");
+            httpClient.DefaultRequestHeaders.Add("Accept", "*/*");
+            httpClient.DefaultRequestHeaders.Remove("User-Agent");
+            httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36");
+            httpClient.DefaultRequestHeaders.Remove("Cookie"); 
+            httpClient.DefaultRequestHeaders.Add("Cookie", "CONSENT=Yes+cb; YSC=NYW5raUzYP4; ");
         }
     }
 }

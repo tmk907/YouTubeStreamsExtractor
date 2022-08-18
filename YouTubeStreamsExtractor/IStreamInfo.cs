@@ -3,7 +3,7 @@
     public interface IStreamInfo
     {
         public int ITag { get; }
-        public string? Url { get; }
+        public string? RawUrl { get; }
         public string MimeType { get; }
         public string Codecs { get; }
         public long Bitrate { get; }
@@ -13,6 +13,8 @@
         public string StreamType => MimeType.Split('/')[0];
         public string Codec => Codecs.Split('.')[0].Replace("codecs", "").Replace("\"", "").Replace("=", "").Trim();
         public string Container => MimeType.Split('/')[1];
+
+        PlayableUrl PlayableUrl { get; init; }
     }
 
     public interface IAudioStreamInfo : IStreamInfo
