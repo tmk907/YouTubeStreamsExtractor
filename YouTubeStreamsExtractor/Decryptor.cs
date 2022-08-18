@@ -3,7 +3,7 @@ using System.Web;
 
 namespace YouTubeStreamsExtractor
 {
-    public class Decryptor
+    public class Decryptor : IDecryptor
     {
         private readonly HttpClient _httpClient;
         private readonly ICache _cache;
@@ -14,11 +14,11 @@ namespace YouTubeStreamsExtractor
             _cache = new Cache();
         }
 
-        public Decryptor(HttpClient httpClient) 
+        public Decryptor(HttpClient httpClient)
         {
             _httpClient = httpClient;
             _cache = new Cache();
-        }        
+        }
 
         public Decryptor(HttpClient httpClient, ICache cache)
         {
@@ -26,7 +26,7 @@ namespace YouTubeStreamsExtractor
             _cache = cache;
         }
 
-        public Dictionary<string,string> ParseQuery(string query)
+        public Dictionary<string, string> ParseQuery(string query)
         {
             var parsed = HttpUtility.ParseQueryString(query);
             return parsed.AllKeys.ToDictionary(key => key, key => parsed[key]);
@@ -62,7 +62,7 @@ namespace YouTubeStreamsExtractor
                 "/(?<id>[a-zA-Z0-9_-]{8,})/player(?:_ias\\.vflset(?:/[a-zA-Z]{2,3}_[a-zA-Z]{2,3})?|-plasma-ias-(?:phone|tablet)-[a-z]{2}_[A-Z]{2}\\.vflset)/base\\.js$",
                 "\b(?<id>vfl[a-zA-Z0-9_-]+)\b.*?\\.js$"
             };
-            foreach(var pattern in patterns)
+            foreach (var pattern in patterns)
             {
                 var regex = new Regex(pattern);
                 var match = regex.Match(playerUrl);
@@ -95,7 +95,7 @@ namespace YouTubeStreamsExtractor
             var sp = parsed["sp"];
             var encryptedSig = parsed["s"];
 
-            var sigFuncName = _cache.GetOrAdd($"{playerId}-{nameof(ExtractSigFunctionName)}", 
+            var sigFuncName = _cache.GetOrAdd($"{playerId}-{nameof(ExtractSigFunctionName)}",
                 () => ExtractSigFunctionName(playerCode));
             var sigFuncCode = _cache.GetOrAdd($"{playerId}-{nameof(ExtractSigFunctionCode)}",
                 () => ExtractSigFunctionCode(sigFuncName, playerCode));
@@ -107,7 +107,7 @@ namespace YouTubeStreamsExtractor
             url = url + "&" + sp + "=" + decryptedSig;
             return url;
         }
-        
+
         public async Task<string> ReplaceNWithDecrypted(string streamUrl, string playerUrl)
         {
             var playerId = GetPlayerId(playerUrl);
@@ -152,24 +152,54 @@ namespace YouTubeStreamsExtractor
 
         public string ExtractSigFunctionName(string playerCode)
         {
-            var patterns = new[]
+            string result;
+
+            var pattern1 = @"encodeURIComponent";
+            var patterns1 = new[]
             {
                 @"\b[cs]\s*&&\s*[adf]\.set\([^,]+\s*,\s*encodeURIComponent\s*\(\s*(?<sig>[a-zA-Z0-9$]+)\(",
-                @"\b[a-zA-Z0-9]+\s*&&\s*[a-zA-Z0-9]+\.set\([^,]+\s*,\s*encodeURIComponent\s*\(\s*(?<sig>[a-zA-Z0-9$]+)\(",
+                @"\b[a-zA-Z0-9]+\s*&&\s*[a-zA-Z0-9]+\.set\([^,]+\s*,\s*encodeURIComponent\s*\(\s*(?<sig>[a-zA-Z0-9$]+)\("
+            };
+            result = TwoPassMatch(pattern1, patterns1, playerCode);
+            if (!string.IsNullOrEmpty(result)) return result;
+
+            var pattern2 = @"\(decodeURIComponent\(h\.s\)\)";
+            var patterns2 = new[]
+            {
                 @"\bm=(?<sig>[a-zA-Z0-9$]{2,})\(decodeURIComponent\(h\.s\)\)",
                 @"\bc&&\(c=(?<sig>[a-zA-Z0-9$]{2,})\(decodeURIComponent\(c\)\)",
+            };
+            result = TwoPassMatch(pattern2, patterns2, playerCode);
+            if (!string.IsNullOrEmpty(result)) return result;
+
+            var pattern3 = @"=\s*function\(\s*a\s*\)\s*{\s*a\s*=\s*a\.split\(\s*""""\s*\)";
+            var patterns3 = new[]
+            {
                 @"(?:\b|[^a-zA-Z0-9$])(?<sig>[a-zA-Z0-9$]{2,})\s*=\s*function\(\s*a\s*\)\s*{\s*a\s*=\s*a\.split\(\s*""""\s*\);[a-zA-Z0-9$]{2}\.[a-zA-Z0-9$]{2}\(a,\d+\)",
                 @"(?:\b|[^a-zA-Z0-9$])(?<sig>[a-zA-Z0-9$]{2,})\s*=\s*function\(\s*a\s*\)\s*{\s*a\s*=\s*a\.split\(\s*""""\s*\)",
                 @"(?<sig>[a-zA-Z0-9$]+)\s*=\s*function\(\s*a\s*\)\s*{\s*a\s*=\s*a\.split\(\s*""""\s*\)"
             };
-            foreach(var pattern in patterns)
+            return TwoPassMatch(pattern3, patterns3, playerCode);
+        }
+
+        private string TwoPassMatch(string mainPattern, string[] patterns, string playerCode)
+        {
+            var regex = new Regex(mainPattern);
+            var match = regex.Match(playerCode);
+
+            while (match.Success)
             {
-                var regex = new Regex(pattern);
-                var match = regex.Match(playerCode);
-                if (match.Groups.TryGetValue("sig", out Group group))
+                foreach (var pattern in patterns)
                 {
-                    return group.Value;
+                    var sigRegex = new Regex(pattern);
+                    var sigMatch = sigRegex.Match(playerCode, match.Index - 20, 100);
+                    if (sigMatch.Groups.TryGetValue("sig", out Group group))
+                    {
+                        return group.Value;
+                    }
                 }
+
+                match = match.NextMatch();
             }
             return "";
         }
