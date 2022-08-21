@@ -1,4 +1,6 @@
-﻿using System.Text.RegularExpressions;
+﻿using JavaScriptEngineSwitcher.Core;
+using JavaScriptEngineSwitcher.NiL;
+using System.Text.RegularExpressions;
 using System.Web;
 
 namespace YouTubeStreamsExtractor
@@ -12,18 +14,28 @@ namespace YouTubeStreamsExtractor
         {
             _httpClient = new HttpClient();
             _cache = new Cache();
+            Initialize();
         }
 
         public Decryptor(HttpClient httpClient)
         {
             _httpClient = httpClient;
             _cache = new Cache();
+            Initialize();
         }
 
         public Decryptor(HttpClient httpClient, ICache cache)
         {
             _httpClient = httpClient;
             _cache = cache;
+            Initialize();
+        }
+
+        private void Initialize()
+        {
+            IJsEngineSwitcher engineSwitcher = JsEngineSwitcher.Current;
+            engineSwitcher.EngineFactories.AddNiL();
+            engineSwitcher.DefaultEngineName = NiLJsEngine.EngineName;
         }
 
         public Dictionary<string, string> ParseQuery(string query)
@@ -143,8 +155,8 @@ namespace YouTubeStreamsExtractor
         {
             var nFunctionName = _cache.GetOrAdd($"{playerId}-{nameof(ExtractNFunctionName)}",
                     () => ExtractNFunctionName(playerCode));
-            var nFunctionCode = _cache.GetOrAdd($"{playerId}-{nameof(ExtractFunctionCode)}",
-                () => ExtractFunctionCode(nFunctionName, playerCode));
+            var nFunctionCode = _cache.GetOrAdd($"{playerId}-{nameof(ExtractNFunctionCode)}",
+                () => ExtractNFunctionCode(nFunctionName, playerCode));
 
             var decryptedN = ExecuteJSCode(nFunctionCode, nFunctionName, encryptedN);
             return decryptedN;
@@ -249,6 +261,23 @@ namespace YouTubeStreamsExtractor
             return functionCode;
         }
 
+        public string ExtractNFunctionCode(string functionName, string code)
+        {
+            var pattern = @$"{functionName}\s*=\s*function\(\w+\)";
+            var regex = new Regex(pattern);
+            var match = regex.Match(code);
+            var functionCode = "";
+            if (match.Success)
+            {
+                var lastIndex = code.IndexOf("enhanced_except", match.Index);
+                lastIndex = code.IndexOf("return", lastIndex + "enhanced_except".Length);
+                lastIndex = code.IndexOf("}", lastIndex, lastIndex + "return".Length);
+                functionCode = code.Substring(match.Index, lastIndex - match.Index + 1);
+            }
+
+            return functionCode;
+        }
+
         public string ExtractVariableDefinition(string varName, string code)
         {
             var pattern = @$"var\s*{varName}\s*=";
@@ -296,10 +325,10 @@ namespace YouTubeStreamsExtractor
         {
             try
             {
-                var jengine = new Jurassic.ScriptEngine();
-                jengine.Evaluate(code);
-                string result = jengine.CallGlobalFunction(functionName, argument) as string;
-                return result ?? "";
+                IJsEngine engine = JsEngineSwitcher.Current.CreateDefaultEngine();
+                engine.Execute(code);
+                string result = engine.CallFunction(functionName, argument) as string;
+                return result;
             }
             catch (Exception ex)
             {

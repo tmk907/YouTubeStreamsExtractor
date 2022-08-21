@@ -29,7 +29,7 @@ namespace YouTubeStreamsExtractor.Models
         public bool IsCrawlable { get; set; }
 
         [JsonPropertyName("thumbnail")]
-        public Thumbnail Thumbnail { get; set; }
+        public VideoThumbnails Thumbnail { get; set; }
 
         [JsonPropertyName("allowRatings")]
         public bool AllowRatings { get; set; }
@@ -50,13 +50,13 @@ namespace YouTubeStreamsExtractor.Models
         public bool IsLiveContent { get; set; }
     }
 
-    public class Thumbnail
+    public class VideoThumbnails
     {
         [JsonPropertyName("thumbnails")]
         public List<Thumbnail> Thumbnails { get; set; }
     }
 
-    public class Thumbnail2
+    public class Thumbnail
     {
         [JsonPropertyName("url")]
         public string Url { get; set; }

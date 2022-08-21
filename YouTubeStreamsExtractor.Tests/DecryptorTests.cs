@@ -69,7 +69,7 @@ namespace YouTubeStreamsExtractor.UrlDecipher.Tests
             var playerCode = GetPlayerCodeFromFile();
             var dec = new Decryptor();
 
-            var functionCode = dec.ExtractFunctionCode(functionName, playerCode);
+            var functionCode = dec.ExtractNFunctionCode(functionName, playerCode);
 
             functionCode.ShouldStartWith("Zka=function(a){var b=a.split");
             functionCode.ShouldEndWith("return b.join(\"\")}");
@@ -97,7 +97,7 @@ namespace YouTubeStreamsExtractor.UrlDecipher.Tests
             var functionName = "Zka";
 
             var dec = new Decryptor();
-            var functionCode = dec.ExtractFunctionCode(functionName, playerCode);
+            var functionCode = dec.ExtractNFunctionCode(functionName, playerCode);
             var decryptedNSig = dec.ExecuteJSCode(functionCode, functionName, nSig);
 
             decryptedNSig.ShouldBe(expectedDecryptedNSig);
