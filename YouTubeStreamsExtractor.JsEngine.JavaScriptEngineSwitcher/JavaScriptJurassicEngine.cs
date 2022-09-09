@@ -1,15 +1,15 @@
 ﻿using JavaScriptEngineSwitcher.Core;
-using JavaScriptEngineSwitcher.NiL;
+using JavaScriptEngineSwitcher.Jurassic;
 
 namespace YouTubeStreamsExtractor
 {
-    public class JavaScriptNiLEngine : IJavaScriptEngine
+    public class JavaScriptJurassicEngine : IJavaScriptEngine
     {
-        public JavaScriptNiLEngine()
+        public JavaScriptJurassicEngine()
         {
             IJsEngineSwitcher engineSwitcher = JsEngineSwitcher.Current;
-            engineSwitcher.EngineFactories.AddNiL();
-            engineSwitcher.DefaultEngineName = NiLJsEngine.EngineName;
+            engineSwitcher.EngineFactories.AddJurassic();
+            engineSwitcher.DefaultEngineName = JurassicJsEngine.EngineName;
         }
 
         public Task<string> ExecuteJSCodeAsync(string code, string functionName, string argument)

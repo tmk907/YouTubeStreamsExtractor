@@ -1,12 +1,9 @@
-﻿// See https://aka.ms/new-console-template for more information
-using YouTubeStreamsExtractor;
+﻿using YouTubeStreamsExtractor;
 
-Console.WriteLine("Hello, World!");
-
-var youTubeStreams = new YouTubeStreams();
+var youTubeStreams = new YouTubeStreams(new JavaScriptJurassicEngine());
 var streamSelector = new StreamSelector();
 
-var url = "https://www.youtube.com/watch?v=ChZi-evbg0Q";
+var url = "https://www.youtube.com/watch?v=gNn9NxZH2Vo";
 
 Console.WriteLine("Get streams with playable urls");
 var streams = await youTubeStreams.GetAllStreamsAsync(url, true);

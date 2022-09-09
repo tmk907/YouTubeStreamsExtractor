@@ -9,15 +9,10 @@ namespace YouTubeStreamsExtractor
         private readonly ICache _cache;
         private IJavaScriptEngine _javaScriptEngine;
 
-        public Decryptor()
+        public Decryptor(IJavaScriptEngine javaScriptEngine, HttpClient? httpClient = null, ICache? cache = null)
         {
-            _httpClient = new HttpClient();
-            _cache = new Cache();
-            _javaScriptEngine = new JavaScriptNiLEngine();
-        }
+            _javaScriptEngine = javaScriptEngine;
 
-        public Decryptor(HttpClient? httpClient = null, ICache? cache = null, IJavaScriptEngine? javaScriptEngine = null)
-        {
             if (httpClient == null)
             {
                 _httpClient = new HttpClient();
@@ -35,16 +30,6 @@ namespace YouTubeStreamsExtractor
             {
                 _cache = cache;
             }
-
-            if(javaScriptEngine == null)
-            {
-                _javaScriptEngine = new JavaScriptNiLEngine();
-            }
-            else
-            {
-                _javaScriptEngine = javaScriptEngine;
-            }
-
         }
 
         public void ChangeJsEngine(IJavaScriptEngine javaScriptEngine)

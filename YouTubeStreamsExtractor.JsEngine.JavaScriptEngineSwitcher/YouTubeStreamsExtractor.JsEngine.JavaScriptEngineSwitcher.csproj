@@ -1,14 +1,18 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\YouTubeStreamsExtractor.JsEngine.JavaScriptEngineSwitcher\YouTubeStreamsExtractor.JsEngine.JavaScriptEngineSwitcher.csproj" />
+    <PackageReference Include="JavaScriptEngineSwitcher.Core" Version="3.19.0" />
+    <PackageReference Include="JavaScriptEngineSwitcher.Jurassic" Version="3.19.0" />
+    <PackageReference Include="JavaScriptEngineSwitcher.NiL" Version="3.19.0" />
+  </ItemGroup>
+	
+  <ItemGroup>
     <ProjectReference Include="..\YouTubeStreamsExtractor\YouTubeStreamsExtractor.csproj" />
   </ItemGroup>
 

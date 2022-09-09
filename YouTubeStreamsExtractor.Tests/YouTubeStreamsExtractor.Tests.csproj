@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\YouTubeStreamsExtractor.JsEngine.JavaScriptEngineSwitcher\YouTubeStreamsExtractor.JsEngine.JavaScriptEngineSwitcher.csproj" />
     <ProjectReference Include="..\YouTubeStreamsExtractor\YouTubeStreamsExtractor.csproj" />
   </ItemGroup>
 
