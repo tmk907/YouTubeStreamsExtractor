@@ -11,32 +11,27 @@ namespace YouTubeStreamsExtractor
 
         public IDecryptor Decryptor => _decryptor;
 
-        public YouTubeStreams(IJavaScriptEngine javaScriptEngine)
+        public YouTubeStreams(IJavaScriptEngine javaScriptEngine, HttpClient? httpClient = null, ICache? cache = null)
         {
             _javaScriptEngine = javaScriptEngine;
-            var msgHandler = new HttpClientHandler()
+
+            if (httpClient == null)
             {
-                AutomaticDecompression = System.Net.DecompressionMethods.All
-            };
-            _httpClient = new HttpClient(msgHandler);
-            _httpClient.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate, br");
-            _httpClient.DefaultRequestHeaders.Add("Accept", "*/*");
-            _httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36");
-            _httpClient.DefaultRequestHeaders.Add("Cookie", "CONSENT=Yes+cb; YSC=NYW5raUzYP4; ");
-            _decryptor = new Decryptor(_javaScriptEngine, _httpClient);
-        }
+                var msgHandler = new HttpClientHandler()
+                {
+                    AutomaticDecompression = System.Net.DecompressionMethods.All
+                };
+                _httpClient = new HttpClient(msgHandler);
+                _httpClient.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate, br");
+                _httpClient.DefaultRequestHeaders.Add("Accept", "*/*");
+                _httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36");
+                _httpClient.DefaultRequestHeaders.Add("Cookie", "CONSENT=Yes+cb; YSC=NYW5raUzYP4; ");
+            }
+            else
+            {
+                _httpClient = httpClient;
+            }
 
-        public YouTubeStreams(IJavaScriptEngine javaScriptEngine, HttpClient httpClient)
-        {
-            _javaScriptEngine = javaScriptEngine;
-            _httpClient = httpClient;
-            _decryptor = new Decryptor(_javaScriptEngine, _httpClient);
-        }
-
-        public YouTubeStreams(IJavaScriptEngine javaScriptEngine, HttpClient httpClient, ICache cache)
-        {
-            _javaScriptEngine = javaScriptEngine;
-            _httpClient = httpClient;
             _decryptor = new Decryptor(_javaScriptEngine, _httpClient, cache);
         }
 
