@@ -1,8 +1,8 @@
 # YouTubeStreamsExtractor
 
-YouTubeStreamsExtractor is a library for extracting audio and video streams from YouTube videos. It's based on [yt-dlp](https://github.com/yt-dlp/yt-dlp)
+YouTubeStreamsExtractor is a library for extracting url for downloading audio and video streams from YouTube videos. It's based on [yt-dlp](https://github.com/yt-dlp/yt-dlp)
 
-## Install2
+## Install
 
 Install YouTubeStreamsExtractor and one of the javascript engines or implement `IJavaScriptEngine` interface.
 
