@@ -1,11 +1,14 @@
 ﻿using YouTubeStreamsExtractor;
+using YouTubeStreamsExtractor.JsEngine.JavaScriptEngineSwitcher;
 
-var youTubeStreams = new YouTubeStreams(new JavaScriptJurassicEngine());
+IJavaScriptEngine jsEngine = new JavaScriptJurassicEngine();
+var youTubeStreams = new YouTubeStreams(jsEngine);
 var streamSelector = new StreamSelector();
 
 var url = "https://www.youtube.com/watch?v=gNn9NxZH2Vo";
 
 Console.WriteLine("Get streams with playable urls");
+// get all streams with 
 var streams = await youTubeStreams.GetAllStreamsAsync(url, true);
 Console.WriteLine($"Found {streams.Count()} streams");
 

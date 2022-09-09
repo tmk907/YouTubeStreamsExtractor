@@ -1,11 +1,42 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net6.0-android</TargetFramework>
-    <SupportedOSPlatformVersion>21</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion>24</SupportedOSPlatformVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
+	
+  <PropertyGroup>
+	<Version>1.0.0</Version>
+	<PackageOutputPath>$(SolutionDir)nupkg</PackageOutputPath>
+	<Title>YouTubeStreamsExtractor.JsEngine.AndroidWebView</Title>
+	<Authors>Tomasz Walecki</Authors>
+	<RepositoryUrl>https://github.com/tmk907/YouTubeStreamsExtractor</RepositoryUrl>
+	<PackageProjectUrl>https://github.com/tmk907/YouTubeStreamsExtractor</PackageProjectUrl>
+	<PackageLicenseExpression>MIT</PackageLicenseExpression>
+	<PackageTags>youtube;download;xamarin;android</PackageTags>
+	<PackageReadmeFile>README.md</PackageReadmeFile>
+	<Description>Library for extracting url for downloading audio and video streams from YouTube videos</Description>	  
+  	<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
+  </PropertyGroup>	
+	
   <ItemGroup>
     <ProjectReference Include="..\YouTubeStreamsExtractor\YouTubeStreamsExtractor.csproj" />
   </ItemGroup>
+	
+  <PropertyGroup Condition=" '$(Configuration)'=='Release' ">
+	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <Target Name="NugetAdd" AfterTargets="Pack">
+	  <exec command="nuget add $(SolutionDir)nupkg\$(PackageId).$(PackageVersion).nupkg -source C:\Source\NugetRepo" />
+  </Target>
+	
+  <ItemGroup>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+	
 </Project>

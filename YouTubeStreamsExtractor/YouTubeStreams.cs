@@ -35,10 +35,10 @@ namespace YouTubeStreamsExtractor
             _decryptor = new Decryptor(_javaScriptEngine, _httpClient, cache);
         }
 
-        public async Task<IEnumerable<IStreamInfo>> GetAllStreamsAsync(string url, bool findAllUrls = false)
+        public async Task<IEnumerable<IStreamInfo>> GetAllStreamsAsync(string url, bool prepareAllUrls = false)
         {
             var youTubeData = await GetPlayerResponseAsync(url);
-            var streams = await GetAllStreamsAsync(youTubeData, findAllUrls);
+            var streams = await GetAllStreamsAsync(youTubeData, prepareAllUrls);
             return streams;
         }
 
@@ -83,7 +83,7 @@ namespace YouTubeStreamsExtractor
             return youtubeData;
         }
 
-        public async Task<IEnumerable<IStreamInfo>> GetAllStreamsAsync(YouTubeData youTubeData, bool findAllUrls = false)
+        public async Task<IEnumerable<IStreamInfo>> GetAllStreamsAsync(YouTubeData youTubeData, bool prepareAllUrls = false)
         {
             var streams = new List<IStreamInfo>();
 
@@ -164,7 +164,7 @@ namespace YouTubeStreamsExtractor
                 }
             }
 
-            if (findAllUrls)
+            if (prepareAllUrls)
             {
                 foreach (var stream in streams)
                 {

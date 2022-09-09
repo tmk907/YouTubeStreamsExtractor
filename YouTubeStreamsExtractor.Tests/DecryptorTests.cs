@@ -1,4 +1,5 @@
 using Shouldly;
+using YouTubeStreamsExtractor.JsEngine.JavaScriptEngineSwitcher;
 
 namespace YouTubeStreamsExtractor.UrlDecipher.Tests
 {

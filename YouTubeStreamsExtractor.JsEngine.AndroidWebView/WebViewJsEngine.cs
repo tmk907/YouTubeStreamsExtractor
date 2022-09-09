@@ -1,8 +1,4 @@
 ﻿using Android.Webkit;
-using System;
-using System.Threading.Tasks;
-using Xamarin.Essentials;
-using YouTubeStreamsExtractor;
 
 namespace YouTubeStreamsExtractor.AndroidWebViewJsEngine
 {

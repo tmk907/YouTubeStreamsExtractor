@@ -1,7 +1,7 @@
 ﻿using JavaScriptEngineSwitcher.Core;
 using JavaScriptEngineSwitcher.Jurassic;
 
-namespace YouTubeStreamsExtractor
+namespace YouTubeStreamsExtractor.JsEngine.JavaScriptEngineSwitcher
 {
     public class JavaScriptJurassicEngine : IJavaScriptEngine
     {
