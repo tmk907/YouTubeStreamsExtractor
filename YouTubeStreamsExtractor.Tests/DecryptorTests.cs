@@ -76,35 +76,36 @@ namespace YouTubeStreamsExtractor.UrlDecipher.Tests
         }
 
         [Test]
-        public void test_DecryptN()
+        public async Task test_DecryptN()
         {
             var nSig = "RQXCPwaoKTlr3HTc";
             var expectedDecryptedNSig = "5m24CCY_pjm2Kw";
             var playerCode = GetPlayerCodeFromFile();
 
             var dec = new Decryptor();
-            var decryptedNSig = dec.DecryptN(nSig, "", playerCode);
+            var decryptedNSig = await dec.DecryptN(nSig, "", playerCode);
 
             decryptedNSig.ShouldBe(expectedDecryptedNSig);
         }
 
         [Test]
-        public void test_ExecuteNFunctionCode()
+        public async Task test_ExecuteNFunctionCode()
         {
             var nSig = "RQXCPwaoKTlr3HTc";
             var expectedDecryptedNSig = "5m24CCY_pjm2Kw";
             var playerCode = GetPlayerCodeFromFile();
             var functionName = "Zka";
+            var jsEngine = new JavaScriptNiLEngine();
 
             var dec = new Decryptor();
             var functionCode = dec.ExtractNFunctionCode(functionName, playerCode);
-            var decryptedNSig = dec.ExecuteJSCode(functionCode, functionName, nSig);
+            var decryptedNSig = await jsEngine.ExecuteJSCodeAsync(functionCode, functionName, nSig);
 
             decryptedNSig.ShouldBe(expectedDecryptedNSig);
         }
 
         [Test]
-        public void test_GetStreamUrl()
+        public async Task test_GetStreamUrl()
         {
             var playerUrl = "https://www.youtube.com/s/player/2fd212f2/player_ias.vflset/en_US/base.js";
             var playerCode = GetPlayerCodeFromFile();
@@ -112,13 +113,13 @@ namespace YouTubeStreamsExtractor.UrlDecipher.Tests
             var expectedUrl = "https://rr2---sn-u2oxu-3ufs.googlevideo.com/videoplayback?expire=1660248357&ei=xQz1YrvIH9qlyQXiopzQCg&ip=2a01%3A111f%3A1003%3A5900%3Af03f%3A5343%3A780f%3Aad20&id=o-AEjJ5NUSh4LBkzw9ZD-FItO1R2YNYnTN885rLNwy3vSS&itag=136&aitags=133%2C134%2C135%2C136%2C160%2C242%2C243%2C244%2C247%2C278%2C298%2C299%2C302%2C303%2C394%2C395%2C396%2C397%2C398%2C399&source=youtube&requiressl=yes&mh=g5&mm=31%2C29&mn=sn-u2oxu-3ufs%2Csn-u2oxu-f5fer&ms=au%2Crdu&mv=m&mvi=2&pcm2cms=yes&pl=36&gcr=pl&initcwndbps=1215000&spc=lT-Khh-i6XVqTrIJwkPuoH6TcEFbdYQ&vprv=1&mime=video%2Fmp4&ns=dol4IPi1mcIEqqMbodHbpGcH&gir=yes&clen=6739974&dur=232.333&lmt=1653309686871534&mt=1660226451&fvip=3&keepalive=yes&fexp=24001373%2C24007246&c=WEB&rbqsm=fr&txp=4535434&n=5m24CCY_pjm2Kw&sparams=expire%2Cei%2Cip%2Cid%2Caitags%2Csource%2Crequiressl%2Cgcr%2Cspc%2Cvprv%2Cmime%2Cns%2Cgir%2Cclen%2Cdur%2Clmt&lsparams=mh%2Cmm%2Cmn%2Cms%2Cmv%2Cmvi%2Cpcm2cms%2Cpl%2Cinitcwndbps&lsig=AG3C_xAwRAIgQaM3BZ43za6kqrrPlYKKHQsrUKgtIastksZ41QQrTKkCIEbCJ1dDlev2JXBfvo7BpsLWK8SyjgOl63zYLu0UkTE8&sig=AOq0QJ8wRgIhANNzj9tx02JpYG90C_40lXmaRxSdOYWN_ApyRGNE8wzXAiEA9CbOEogJEjfBTfoNnoaAApq3YVam4gsgcDx9rwDyieM=";
 
             var dec = new Decryptor();
-            var url = dec.GetStreamUrl(signatureCipher, playerUrl, playerCode);
+            var url = await dec.GetStreamUrl(signatureCipher, playerUrl, playerCode);
 
             url.ShouldBe(expectedUrl);
         }
 
         [Test]
-        public void test_StreamUrl_cache()
+        public async Task test_StreamUrl_cache()
         {
             var playerUrl = "https://www.youtube.com/s/player/2fd212f2/player_ias.vflset/en_US/base.js";
             var playerCode = GetPlayerCodeFromFile();
@@ -126,8 +127,8 @@ namespace YouTubeStreamsExtractor.UrlDecipher.Tests
             var expectedUrl = "https://rr2---sn-u2oxu-3ufs.googlevideo.com/videoplayback?expire=1660248357&ei=xQz1YrvIH9qlyQXiopzQCg&ip=2a01%3A111f%3A1003%3A5900%3Af03f%3A5343%3A780f%3Aad20&id=o-AEjJ5NUSh4LBkzw9ZD-FItO1R2YNYnTN885rLNwy3vSS&itag=136&aitags=133%2C134%2C135%2C136%2C160%2C242%2C243%2C244%2C247%2C278%2C298%2C299%2C302%2C303%2C394%2C395%2C396%2C397%2C398%2C399&source=youtube&requiressl=yes&mh=g5&mm=31%2C29&mn=sn-u2oxu-3ufs%2Csn-u2oxu-f5fer&ms=au%2Crdu&mv=m&mvi=2&pcm2cms=yes&pl=36&gcr=pl&initcwndbps=1215000&spc=lT-Khh-i6XVqTrIJwkPuoH6TcEFbdYQ&vprv=1&mime=video%2Fmp4&ns=dol4IPi1mcIEqqMbodHbpGcH&gir=yes&clen=6739974&dur=232.333&lmt=1653309686871534&mt=1660226451&fvip=3&keepalive=yes&fexp=24001373%2C24007246&c=WEB&rbqsm=fr&txp=4535434&n=5m24CCY_pjm2Kw&sparams=expire%2Cei%2Cip%2Cid%2Caitags%2Csource%2Crequiressl%2Cgcr%2Cspc%2Cvprv%2Cmime%2Cns%2Cgir%2Cclen%2Cdur%2Clmt&lsparams=mh%2Cmm%2Cmn%2Cms%2Cmv%2Cmvi%2Cpcm2cms%2Cpl%2Cinitcwndbps&lsig=AG3C_xAwRAIgQaM3BZ43za6kqrrPlYKKHQsrUKgtIastksZ41QQrTKkCIEbCJ1dDlev2JXBfvo7BpsLWK8SyjgOl63zYLu0UkTE8&sig=AOq0QJ8wRgIhANNzj9tx02JpYG90C_40lXmaRxSdOYWN_ApyRGNE8wzXAiEA9CbOEogJEjfBTfoNnoaAApq3YVam4gsgcDx9rwDyieM=";
 
             var dec = new Decryptor();
-            var url = dec.GetStreamUrl(signatureCipher, playerUrl, playerCode);
-            var url2 = dec.GetStreamUrl(signatureCipher, playerUrl, playerCode);
+            var url = await dec.GetStreamUrl(signatureCipher, playerUrl, playerCode);
+            var url2 = await dec.GetStreamUrl(signatureCipher, playerUrl, playerCode);
 
             url.ShouldBe(expectedUrl);
             url2.ShouldBe(expectedUrl);
@@ -145,15 +146,16 @@ namespace YouTubeStreamsExtractor.UrlDecipher.Tests
         }
 
         [Test]
-        public void test_DecryptSignature()
+        public async Task test_DecryptSignature()
         {
             var sig = "===gocfsKygy46CdN_sJAtBkm50hOzvK-vkNatbldzs_clCQICYcVCtgibVk0wsL0TXQjRWTX_gjz6y8FMyF4EF_3NKVFgIQRw8JQ0qOAqOA";
             var expectedDecrypted = "AOq0QJ8wRQIgFVKN3_FE4FyMF8y6zjg_XTWRjQXT0Lsw0kVbigtCVcYCIQClc_szdlbtaNkv-KvzOh05mkBtAJs_NdC64ygyKsfcog==";
             var functionName = "Yva";
             var expectedSigCode = File.ReadAllText(@"files/sigCode.txt");
+            var jsEngine = new JavaScriptNiLEngine();
 
             var dec = new Decryptor();
-            var decrypted = dec.ExecuteJSCode(expectedSigCode, functionName, sig);
+            var decrypted = await jsEngine.ExecuteJSCodeAsync(expectedSigCode, functionName, sig);
 
             decrypted.ShouldBe(expectedDecrypted);
         }

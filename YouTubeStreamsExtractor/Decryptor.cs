@@ -1,6 +1,4 @@
-﻿using JavaScriptEngineSwitcher.Core;
-using JavaScriptEngineSwitcher.NiL;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using System.Web;
 
 namespace YouTubeStreamsExtractor
@@ -9,33 +7,49 @@ namespace YouTubeStreamsExtractor
     {
         private readonly HttpClient _httpClient;
         private readonly ICache _cache;
+        private IJavaScriptEngine _javaScriptEngine;
 
         public Decryptor()
         {
             _httpClient = new HttpClient();
             _cache = new Cache();
-            Initialize();
+            _javaScriptEngine = new JavaScriptNiLEngine();
         }
 
-        public Decryptor(HttpClient httpClient)
+        public Decryptor(HttpClient? httpClient = null, ICache? cache = null, IJavaScriptEngine? javaScriptEngine = null)
         {
-            _httpClient = httpClient;
-            _cache = new Cache();
-            Initialize();
+            if (httpClient == null)
+            {
+                _httpClient = new HttpClient();
+            }
+            else
+            {
+                _httpClient = httpClient;
+            }
+
+            if (cache == null)
+            {
+                _cache = new Cache();
+            }
+            else
+            {
+                _cache = cache;
+            }
+
+            if(javaScriptEngine == null)
+            {
+                _javaScriptEngine = new JavaScriptNiLEngine();
+            }
+            else
+            {
+                _javaScriptEngine = javaScriptEngine;
+            }
+
         }
 
-        public Decryptor(HttpClient httpClient, ICache cache)
+        public void ChangeJsEngine(IJavaScriptEngine javaScriptEngine)
         {
-            _httpClient = httpClient;
-            _cache = cache;
-            Initialize();
-        }
-
-        private void Initialize()
-        {
-            IJsEngineSwitcher engineSwitcher = JsEngineSwitcher.Current;
-            engineSwitcher.EngineFactories.AddNiL();
-            engineSwitcher.DefaultEngineName = NiLJsEngine.EngineName;
+            _javaScriptEngine = javaScriptEngine;
         }
 
         public Dictionary<string, string> ParseQuery(string query)
@@ -95,10 +109,10 @@ namespace YouTubeStreamsExtractor
                 playerCode = await GetPlayerCode(playerUrl);
                 _cache.Add(playerId, playerCode);
             }
-            return GetStreamUrl(signatureCipher, playerUrl, playerCode);
+            return await GetStreamUrl(signatureCipher, playerUrl, playerCode);
         }
 
-        public string GetStreamUrl(string signatureCipher, string playerUrl, string playerCode)
+        public async Task<string> GetStreamUrl(string signatureCipher, string playerUrl, string playerCode)
         {
             var playerId = GetPlayerId(playerUrl);
 
@@ -112,9 +126,9 @@ namespace YouTubeStreamsExtractor
             var sigFuncCode = _cache.GetOrAdd($"{playerId}-{nameof(ExtractSigFunctionCode)}",
                 () => ExtractSigFunctionCode(sigFuncName, playerCode));
 
-            var decryptedSig = ExecuteJSCode(sigFuncCode, sigFuncName, encryptedSig);
+            var decryptedSig = await _javaScriptEngine.ExecuteJSCodeAsync(sigFuncCode, sigFuncName, encryptedSig);
 
-            url = ReplaceNWithDecrypted(url, playerId, playerCode);
+            url = await ReplaceNWithDecrypted(url, playerId, playerCode);
 
             url = url + "&" + sp + "=" + decryptedSig;
             return url;
@@ -130,20 +144,22 @@ namespace YouTubeStreamsExtractor
                 _cache.Add(playerId, playerCode);
             }
 
-            streamUrl = ReplaceNWithDecrypted(streamUrl, playerId, playerCode);
+            streamUrl = await ReplaceNWithDecrypted(streamUrl, playerId, playerCode);
 
             return streamUrl;
         }
 
-        public string ReplaceNWithDecrypted(string streamUrl, string playerId, string playerCode)
+        public async Task<string> ReplaceNWithDecrypted(string streamUrl, string playerId, string playerCode)
         {
             var encryptedN = HttpUtility.ParseQueryString(streamUrl)["n"];
+            System.Diagnostics.Debug.WriteLine($"encryptedN {encryptedN}");
             if (encryptedN != null)
             {
-                var decryptedN = _cache.GetOrAdd($"{playerId}-{nameof(DecryptN)}-{encryptedN}",
+                var decryptedN = await _cache.GetOrAddAsync($"{playerId}-{nameof(DecryptN)}-{encryptedN}",
                     () => DecryptN(encryptedN, playerId, playerCode));
                 if (!string.IsNullOrEmpty(decryptedN))
                 {
+                    System.Diagnostics.Debug.WriteLine($"decryptedN {decryptedN}");
                     streamUrl = streamUrl.Replace($"n={encryptedN}", $"n={decryptedN}");
                 }
             }
@@ -151,14 +167,14 @@ namespace YouTubeStreamsExtractor
             return streamUrl;
         }
 
-        public string DecryptN(string encryptedN, string playerId, string playerCode)
+        public async Task<string> DecryptN(string encryptedN, string playerId, string playerCode)
         {
             var nFunctionName = _cache.GetOrAdd($"{playerId}-{nameof(ExtractNFunctionName)}",
                     () => ExtractNFunctionName(playerCode));
             var nFunctionCode = _cache.GetOrAdd($"{playerId}-{nameof(ExtractNFunctionCode)}",
                 () => ExtractNFunctionCode(nFunctionName, playerCode));
 
-            var decryptedN = ExecuteJSCode(nFunctionCode, nFunctionName, encryptedN);
+            var decryptedN = await _javaScriptEngine.ExecuteJSCodeAsync(nFunctionCode, nFunctionName, encryptedN);
             return decryptedN;
         }
 
@@ -319,21 +335,6 @@ namespace YouTubeStreamsExtractor
                 return functionCode;
             }
             return "";
-        }
-
-        public string ExecuteJSCode(string code, string functionName, string argument)
-        {
-            try
-            {
-                IJsEngine engine = JsEngineSwitcher.Current.CreateDefaultEngine();
-                engine.Execute(code);
-                string result = engine.CallFunction(functionName, argument) as string;
-                return result;
-            }
-            catch (Exception ex)
-            {
-                return "";
-            }
         }
     }
 }

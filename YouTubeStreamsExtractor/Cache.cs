@@ -7,6 +7,7 @@ namespace YouTubeStreamsExtractor
         void Add(string key, string value);
         void Clear();
         string GetOrAdd(string key, Func<string> valueFactory);
+        Task<string> GetOrAddAsync(string key, Func<Task<string>> valueFactory);
         bool TryGetValue(string key, out string value);
     }
 
@@ -32,6 +33,17 @@ namespace YouTubeStreamsExtractor
                 return value;
             }
             value = valueFactory();
+            _cache.TryAdd(key, value);
+            return value;
+        }
+
+        public async Task<string> GetOrAddAsync(string key, Func<Task<string>> valueFactory)
+        {
+            if (_cache.TryGetValue(key, out string value) && !string.IsNullOrEmpty(value))
+            {
+                return value;
+            }
+            value = await valueFactory();
             _cache.TryAdd(key, value);
             return value;
         }
