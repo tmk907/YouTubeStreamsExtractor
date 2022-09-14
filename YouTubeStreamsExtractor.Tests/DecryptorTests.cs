@@ -34,17 +34,17 @@ namespace YouTubeStreamsExtractor.UrlDecipher.Tests
             playerUrl.ShouldBe("https://www.youtube.com/s/player/2fd212f2/player_ias.vflset/en_US/base.js");
         }
 
-        [Test]
-        public async Task test_GetPlayerCode()
-        {
-            var playerUrl = "https://www.youtube.com/s/player/2fd212f2/player_ias.vflset/en_US/base.js";
+        //[Test]
+        //public async Task test_GetPlayerCode()
+        //{
+        //    var playerUrl = "https://www.youtube.com/s/player/2fd212f2/player_ias.vflset/en_US/base.js";
 
-            var dec = new Decryptor(GetJavaScriptEngine());
-            var code = await dec.GetPlayerCode(playerUrl);
+        //    var dec = new Decryptor(GetJavaScriptEngine());
+        //    var code = await dec.GetPlayerCode(playerUrl);
 
-            code.ShouldNotBeNullOrEmpty();
-            code.ShouldContain("var _yt_player={}");
-        }
+        //    code.ShouldNotBeNullOrEmpty();
+        //    code.ShouldContain("var _yt_player={}");
+        //}
 
         [Test]
         public void test_GetPlayerId()
@@ -150,7 +150,7 @@ namespace YouTubeStreamsExtractor.UrlDecipher.Tests
 
             name.ShouldBe("Yva");
         }
-
+        
         [Test]
         public async Task test_DecryptSignature()
         {
@@ -183,6 +183,30 @@ namespace YouTubeStreamsExtractor.UrlDecipher.Tests
         {
             var playerCode = File.ReadAllText(@"files/playerCode.txt");
             return playerCode;
+        }
+
+        [Test]
+        public void test_ExtractSigFunctionName2()
+        {
+            var playerCode = File.ReadAllText(@"files/playerCode2.js");
+            var dec = new Decryptor(GetJavaScriptEngine());
+
+            var name = dec.ExtractSigFunctionName(playerCode);
+
+            name.ShouldBe("$va");
+        }
+
+        [Test]
+        public void test_ExtractSigFunctionCode2()
+        {
+            var functionName = "$va";
+            var playerCode = File.ReadAllText(@"files/playerCode2.js");
+            var expectedSigCode = File.ReadAllText(@"files/sigCode2.txt");
+
+            var dec = new Decryptor(GetJavaScriptEngine());
+            var sigCode = dec.ExtractSigFunctionCode(functionName, playerCode);
+
+            sigCode.ShouldBe(expectedSigCode);
         }
     }
 }

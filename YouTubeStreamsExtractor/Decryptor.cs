@@ -257,14 +257,14 @@ namespace YouTubeStreamsExtractor
 
         public string ExtractFunctionCode(string functionName, string code)
         {
-            var pattern = @$"{functionName}\s*=\s*function\(\w+\)";
+            var pattern = @$"{Regex.Escape(functionName)}\s*=\s*function\(\w+\)";
             var functionCode = GetCode(pattern, code);
             return functionCode;
         }
 
         public string ExtractNFunctionCode(string functionName, string code)
         {
-            var pattern = @$"{functionName}\s*=\s*function\(\w+\)";
+            var pattern = @$"{Regex.Escape(functionName)}\s*=\s*function\(\w+\)";
             var regex = new Regex(pattern);
             var match = regex.Match(code);
             var functionCode = "";
@@ -281,7 +281,7 @@ namespace YouTubeStreamsExtractor
 
         public string ExtractVariableDefinition(string varName, string code)
         {
-            var pattern = @$"var\s*{varName}\s*=";
+            var pattern = @$"var\s*{Regex.Escape(varName)}\s*=";
             var varDef = GetCode(pattern, code);
             return varDef;
         }
