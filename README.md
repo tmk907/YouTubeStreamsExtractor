@@ -19,7 +19,7 @@ Get streams with playable urls
 using YouTubeStreamsExtractor;
 using YouTubeStreamsExtractor.JsEngine.JavaScriptEngineSwitcher;
 
-IJavaScriptEngine jsEngine = new JavaScriptJurassicEngine();
+IJavaScriptEngine jsEngine = new JavaScriptNiLEngine();
 var youTubeStreams = new YouTubeStreams(jsEngine);
 ```
 
