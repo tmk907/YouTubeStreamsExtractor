@@ -1,7 +1,7 @@
 ﻿using YouTubeStreamsExtractor;
 using YouTubeStreamsExtractor.JsEngine.JavaScriptEngineSwitcher;
 
-IJavaScriptEngine jsEngine = new JavaScriptNiLEngine();
+IJavaScriptEngine jsEngine = new JavaScriptJurassicEngine();
 var youTubeStreams = new YouTubeStreams(jsEngine);
 var streamSelector = new StreamSelector();
 

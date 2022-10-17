@@ -48,3 +48,6 @@ This is the simplest implementation but sometimes it might not be able to execut
 
 ## YouTubeStreamsExtractor.JsEngine.AndroidWebView
 Uses WebView to execute js code.
+
+## ExampleWinUI3App
+WinUI3 example application uses WebView2 to execute javascript code.
