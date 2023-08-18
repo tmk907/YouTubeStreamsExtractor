@@ -7,7 +7,8 @@ namespace YouTubeStreamsExtractor.Tests
     {
         private IJavaScriptEngine GetJavaScriptEngine()
         {
-            return new JavaScriptJurassicEngine();
+            return new JavaScriptJintEngine();
+            //return new JavaScriptJurassicEngine();
             //return new JavaScriptNiLEngine();
         }
 

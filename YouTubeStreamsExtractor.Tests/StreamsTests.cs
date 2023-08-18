@@ -7,7 +7,7 @@ namespace YouTubeStreamsExtractor.Tests
     {
         private IJavaScriptEngine GetJavaScriptEngine()
         {
-            return new JavaScriptJurassicEngine();
+            return new JavaScriptJintEngine();
         }
 
         private string GetPlayerCodeFromFile(string playerId)
