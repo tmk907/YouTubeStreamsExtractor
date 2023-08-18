@@ -245,7 +245,7 @@ namespace YouTubeStreamsExtractor
             {
                 if (match.Groups.TryGetValue("idx", out var idx) && idx.Value == "0")
                 {
-                    var regex2 = new Regex($"var {Regex.Escape(nFuncGroup.Value)}\\s*=\\s*(\\[.+?\\]);");
+                    var regex2 = new Regex($"var {Regex.Escape(nFuncGroup.Value)}\\s*=\\s*(\\[.+?\\])\\s*[,;]");
                     var match2 = regex2.Match(playerCode);
                     var name = match2.Groups.Values.LastOrDefault()?.Value ?? "";
                     return name.Replace("[", "").Replace("]", "");
