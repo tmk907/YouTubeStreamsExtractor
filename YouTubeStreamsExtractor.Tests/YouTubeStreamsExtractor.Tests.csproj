@@ -23,7 +23,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="files\playerCode.txt">
+    <None Update="files\009f1d77.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="files\b7910ca8.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="files\2fd212f2.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="files\playerCode2.js">
