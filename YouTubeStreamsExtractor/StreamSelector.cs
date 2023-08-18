@@ -18,10 +18,14 @@
             _resolutionPreferences.AddRange(DefaultResolutionPreferences);
         }
 
-        public StreamSelector(IEnumerable<string> resPreferences, IEnumerable<string> codecPreferences)
+        public StreamSelector(IEnumerable<string> resPreferences, IEnumerable<string>? codecPreferences = null)
         {
-            _videoCodecPreferences.AddRange(codecPreferences);
             _resolutionPreferences.AddRange(resPreferences);
+            if (codecPreferences is null)
+            {
+                codecPreferences = new List<string>();
+            }
+            _videoCodecPreferences.AddRange(codecPreferences);
         }
 
         public IVideoStreamInfo? SelectPreferredVideo(IEnumerable<IStreamInfo> streams,
