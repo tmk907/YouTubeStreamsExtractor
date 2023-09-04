@@ -4,8 +4,6 @@ using Cake.Common.Tools.DotNet.Clean;
 using Cake.Common.Tools.DotNet.Restore;
 using Cake.Common.Tools.DotNet.Build;
 using Cake.Frosting;
-using Cake.Core.IO;
-using Cake.Core.Diagnostics;
 
 [TaskName("Clean")]
 public sealed class CleanTask : FrostingTask<BuildContext>
