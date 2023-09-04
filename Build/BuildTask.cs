@@ -5,7 +5,20 @@ using Cake.Common.Tools.DotNet.Restore;
 using Cake.Common.Tools.DotNet.Build;
 using Cake.Frosting;
 
+[TaskName("RestoreWorkloads")]
+public sealed class RestoreWorkloadsTask : FrostingTask<BuildContext>
+{
+    public override void Run(BuildContext context)
+    {
+        foreach (var project in context.ProjectNames)
+        {
+            context.DotNetWorkloadRestore(context.ProjectNameToPath(project).FullPath);
+        }
+    }
+}
+
 [TaskName("Clean")]
+[IsDependentOn(typeof(RestoreWorkloadsTask))]
 public sealed class CleanTask : FrostingTask<BuildContext>
 {
     public override void Run(BuildContext context)
@@ -45,7 +58,6 @@ public sealed class RestoreTask : FrostingTask<BuildContext>
         };
         foreach (var project in context.ProjectNames)
         {
-            context.DotNetWorkloadRestore(context.ProjectNameToPath(project).FullPath);
             context.DotNetRestore(context.ProjectNameToPath(project).FullPath, settings);
         }
         context.DotNetRestore(context.ProjectNameToPath(context.TestsProjectName).FullPath, settings);
