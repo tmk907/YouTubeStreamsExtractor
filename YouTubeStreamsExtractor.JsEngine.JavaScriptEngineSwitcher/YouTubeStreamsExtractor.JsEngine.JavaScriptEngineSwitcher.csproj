@@ -31,14 +31,6 @@
     <ProjectReference Include="..\YouTubeStreamsExtractor\YouTubeStreamsExtractor.csproj" />
   </ItemGroup>
 	
-  <PropertyGroup Condition=" '$(Configuration)'=='Release' ">
-	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-  </PropertyGroup>
-
-  <Target Name="NugetAdd" AfterTargets="Pack">
-	  <exec command="nuget add $(SolutionDir)nupkg\$(PackageId).$(PackageVersion).nupkg -source C:\Source\NugetRepo" />
-  </Target>
-	
   <ItemGroup>
     <None Include="..\README.md">
       <Pack>True</Pack>
