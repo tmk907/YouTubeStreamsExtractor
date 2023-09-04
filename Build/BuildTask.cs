@@ -45,6 +45,7 @@ public sealed class RestoreTask : FrostingTask<BuildContext>
         };
         foreach (var project in context.ProjectNames)
         {
+            context.DotNetWorkloadRestore(context.ProjectNameToPath(project).FullPath);
             context.DotNetRestore(context.ProjectNameToPath(project).FullPath, settings);
         }
         context.DotNetRestore(context.ProjectNameToPath(context.TestsProjectName).FullPath, settings);
