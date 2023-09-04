@@ -10,7 +10,6 @@ using System.Collections.Generic;
 public class BuildContext : FrostingContext
 {
     public string MsBuildConfiguration => this.ArgumentOrEnvironment("configuration", Constants.DefaultBuildConfiguration);
-    public string ReleaseVersion { get; }
     public string GitHubSecretToken => this.ArgumentOrEnvironment<string>("GITHUB_TOKEN");
     public string NugetApiKey => this.ArgumentOrEnvironment<string>("NUGET_API_KEY");
     public string LocalNugetRepo = @"C:\Source\NugetRepo";
@@ -34,8 +33,6 @@ public class BuildContext : FrostingContext
     public BuildContext(ICakeContext context)
         : base(context)
     {
-        //this.ReleaseVersion = this.GitVersioningGetVersion().NuGetPackageVersion;
-
         if (this.IsRunningInCI)
         {
             RootDirectory = this.GitHubActions().Environment.Workflow.Workspace;

@@ -25,5 +25,4 @@ jobs:
         NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
       run: |
         chmod +x build.sh
-        ./build.sh --target PublishGithub
-        ./build.sh --target PublishNuget
+        ./build.sh --target Publish
