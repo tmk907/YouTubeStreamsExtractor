@@ -1,6 +1,7 @@
 ﻿using Microsoft.UI.Xaml;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
 using YouTubeStreamsExtractor;
 
@@ -16,11 +17,20 @@ namespace ExampleWinUI3App
     {
         private IJavaScriptEngine jsEngine;
         private YouTubeStreams _youTubeStreams;
+        private readonly DispatcherTimer _timer;
 
         public MainWindow()
         {
             this.InitializeComponent();
             webview.Loaded += Webview_Loaded;
+            _timer = new DispatcherTimer();
+            _timer.Interval = TimeSpan.FromSeconds(5);
+            _timer.Tick += Timer_Tick;
+        }
+
+        private void Timer_Tick(object sender, object e)
+        {
+            HideInfoBar();
         }
 
         private async void Webview_Loaded(object sender, RoutedEventArgs e)
@@ -41,7 +51,7 @@ namespace ExampleWinUI3App
                 Bitrate = stream.Bitrate.ToString(),
                 Codec = stream.Codec,
                 Container = stream.Container,
-                Label = stream.Bitrate.ToString(),
+                Label = $"{(int)(stream.Bitrate / 1024.0)} Kb/s",
                 Type = stream.StreamType,
                 Url = stream.PlayableUrl.Url
             });
@@ -61,13 +71,34 @@ namespace ExampleWinUI3App
             }
         }
 
-        private void resultsListView_ItemClick(object sender, Microsoft.UI.Xaml.Controls.ItemClickEventArgs e)
+        private async void resultsListView_ItemClick(object sender, Microsoft.UI.Xaml.Controls.ItemClickEventArgs e)
         {
             DataPackage dataPackage = new DataPackage();
             dataPackage.RequestedOperation = DataPackageOperation.Copy;
             var vm = e.ClickedItem as StreamInfoVM;
             dataPackage.SetText(vm.Url);
             Clipboard.SetContent(dataPackage);
+
+            await ShowInfoBar();
+        }
+
+        private async Task ShowInfoBar()
+        {
+            HideInfoBar();
+
+            await Task.Delay(250);
+
+            _timer.Stop();
+            infoBar.Visibility = Visibility.Visible;
+            infoBar.IsOpen = true;
+            //infoBar.Message = $"Url: {vm.Url}";
+            _timer.Start();
+        }
+
+        private void HideInfoBar()
+        {
+            infoBar.IsOpen = false;
+            infoBar.Visibility = Visibility.Collapsed;
         }
     }
 }

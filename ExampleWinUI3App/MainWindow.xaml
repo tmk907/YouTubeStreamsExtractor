@@ -7,51 +7,62 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Width="400">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        <WebView2 x:Name="webview" Visibility="Collapsed" />
-        <StackPanel
-            Grid.Row="0"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Center"
-            Orientation="Horizontal">
-            <TextBox
-                x:Name="queryTextBox"
-                Width="300"
+    <Grid>
+        <Grid Width="500">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <WebView2 x:Name="webview" Visibility="Collapsed" />
+            <StackPanel
+                Grid.Row="0"
                 HorizontalAlignment="Stretch"
-                PlaceholderText="Video url" />
-            <Button
-                x:Name="searchButton"
-                Click="searchButton_Click"
-                IsEnabled="False">
-                Search
-            </Button>
-        </StackPanel>
-        <Grid Grid.Row="1">
-            <ListView
-                x:Name="resultsListView"
-                IsItemClickEnabled="True"
-                ItemClick="resultsListView_ItemClick">
-                <ListView.ItemTemplate>
-                    <DataTemplate x:DataType="local:StreamInfoVM">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition />
-                                <ColumnDefinition />
-                                <ColumnDefinition />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="{x:Bind Type}" />
-                            <TextBlock Grid.Column="1" Text="{x:Bind Container}" />
-                            <TextBlock Grid.Column="2" Text="{x:Bind Label}" />
-                            <TextBlock Grid.Column="3" Text="{x:Bind Codec}" />
-                        </Grid>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
+                VerticalAlignment="Center"
+                Orientation="Horizontal">
+                <TextBox
+                    x:Name="queryTextBox"
+                    Width="400"
+                    HorizontalAlignment="Stretch"
+                    PlaceholderText="Video url" />
+                <Button
+                    x:Name="searchButton"
+                    Click="searchButton_Click"
+                    IsEnabled="False">
+                    Search
+                </Button>
+            </StackPanel>
+            <Grid Grid.Row="1">
+                <ListView
+                    x:Name="resultsListView"
+                    IsItemClickEnabled="True"
+                    ItemClick="resultsListView_ItemClick">
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="local:StreamInfoVM">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="{x:Bind Type}" />
+                                <TextBlock Grid.Column="1" Text="{x:Bind Container}" />
+                                <TextBlock Grid.Column="2" Text="{x:Bind Label}" />
+                                <TextBlock Grid.Column="3" Text="{x:Bind Codec}" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </Grid>
         </Grid>
+        <InfoBar
+            x:Name="infoBar"
+            Title="Url copied to clipboard"
+            Grid.Row="1"
+            VerticalAlignment="Bottom"
+            IsOpen="False"
+            Message=""
+            Severity="Informational"
+            Visibility="Collapsed" />
     </Grid>
 </Window>
