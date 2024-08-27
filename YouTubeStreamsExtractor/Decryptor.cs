@@ -252,6 +252,38 @@ namespace YouTubeStreamsExtractor
                 }
                 return nFuncGroup.Value;
             }
+
+            string pattern = @"
+                (?x)
+                    (?:
+                        \.get\(""n""\)\)&&\(b=|
+                        (?:
+                            b=String\.fromCharCode\(110\)|
+                            (?<str_idx>[a-zA-Z0-9_$.]+)&&\(b=""nn""\[\+(\k<str_idx>)\]
+                        )
+                        (?:
+                            ,[a-zA-Z0-9_$]+\(a\))?,c=a\.
+                            (?:
+                                get\(b\)|
+                                [a-zA-Z0-9_$]+\[b\]\|\|null
+                            )\)&&\(c=|
+                        \b(?<var>[a-zA-Z0-9_$]+)=
+                    )(?<nfunc>[a-zA-Z0-9_$]+)(?:\[(?<idx>\d+)\])?\([a-zA-Z]\)
+                    (?(var),[a-zA-Z0-9_$]+\.set\(""n""\,(\k<var>)\),(\k<nfunc>)\.length)";
+            regex = new Regex(pattern, RegexOptions.IgnorePatternWhitespace);
+            match = regex.Match(playerCode);
+            if (match.Groups.TryGetValue("nfunc", out nFuncGroup))
+            {
+                if (match.Groups.TryGetValue("idx", out var idx) && idx.Value == "0")
+                {
+                    var regex2 = new Regex($"var {Regex.Escape(nFuncGroup.Value)}\\s*=\\s*(\\[.+?\\])\\s*[,;]");
+                    var match2 = regex2.Match(playerCode);
+                    var name = match2.Groups.Values.LastOrDefault()?.Value ?? "";
+                    return name.Replace("[", "").Replace("]", "");
+                }
+                return nFuncGroup.Value;
+            }
+
             return "";
         }
 
