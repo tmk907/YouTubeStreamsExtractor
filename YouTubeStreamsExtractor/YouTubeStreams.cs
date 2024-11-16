@@ -1,5 +1,6 @@
 ﻿using YouTubeStreamsExtractor.Models;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 
 namespace YouTubeStreamsExtractor
 {
@@ -24,8 +25,9 @@ namespace YouTubeStreamsExtractor
                 _httpClient = new HttpClient(msgHandler);
                 _httpClient.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate, br");
                 _httpClient.DefaultRequestHeaders.Add("Accept", "*/*");
-                _httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36");
-                _httpClient.DefaultRequestHeaders.Add("Cookie", "CONSENT=Yes+cb; YSC=NYW5raUzYP4; ");
+                _httpClient.DefaultRequestHeaders.Add("User-Agent", "com.google.ios.youtube/19.29.1 (iPhone16,2; U; CPU iOS 17_5_1 like Mac OS X;)");
+                _httpClient.DefaultRequestHeaders.Add("X-YouTube-Client-Name", "IOS");
+                _httpClient.DefaultRequestHeaders.Add("X-YouTube-Client-Version", "19.29.1");
             }
             else
             {
@@ -46,8 +48,10 @@ namespace YouTubeStreamsExtractor
         {
             var response = await _httpClient.GetStringAsync(url);
 
-            var token1 = "var ytInitialPlayerResponse = ";
-            var indexOfVar = response.IndexOf(token1);
+            var regex = new Regex("var ytInitialPlayerResponse\\s*=\\s*{", RegexOptions.Compiled);
+            var match = regex.Match(response);
+            var token1 = "var ytInitialPlayerResponse =";
+            var indexOfVar = match.Index;
             var startIndex = indexOfVar + token1.Length;
             var lastIndex = response.Length;
             var count = 0;
@@ -61,7 +65,7 @@ namespace YouTubeStreamsExtractor
                 {
                     count--;
                 }
-                if (count == 0)
+                if (count == 0 && i > startIndex + 10)
                 {
                     lastIndex = i;
                     break;
@@ -180,9 +184,10 @@ namespace YouTubeStreamsExtractor
             httpClient.DefaultRequestHeaders.Remove("Accept");
             httpClient.DefaultRequestHeaders.Add("Accept", "*/*");
             httpClient.DefaultRequestHeaders.Remove("User-Agent");
-            httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36");
+            httpClient.DefaultRequestHeaders.Add("User-Agent", "com.google.ios.youtube/19.29.1 (iPhone16,2; U; CPU iOS 17_5_1 like Mac OS X;)");
             httpClient.DefaultRequestHeaders.Remove("Cookie"); 
-            httpClient.DefaultRequestHeaders.Add("Cookie", "CONSENT=Yes+cb; YSC=NYW5raUzYP4; ");
+            httpClient.DefaultRequestHeaders.Add("X-YouTube-Client-Name", "IOS");
+            httpClient.DefaultRequestHeaders.Add("X-YouTube-Client-Version", "19.29.1");
         }
     }
 }
