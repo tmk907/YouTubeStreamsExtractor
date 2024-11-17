@@ -8,9 +8,9 @@ Install YouTubeStreamsExtractor and one of the javascript engines or implement `
 
 | Version | Package | Description |
 | ------- | ------- | ----------- |
-| [![Nuget](https://img.shields.io/nuget/v/YouTubeStreamsExtractor)](https://www.nuget.org/packages/YouTubeStreamsExtractor) | [YouTubeStreamsExtractor](https://www.nuget.org/packages/YouTubeStreamsExtractor) | .NET 8 Library |
-| [![Nuget](https://img.shields.io/nuget/v/YouTubeStreamsExtractor.JsEngine.JavaScriptEngineSwitcher)](https://www.nuget.org/packages/YouTubeStreamsExtractor.JsEngine.JavaScriptEngineSwitcher) | [YouTubeStreamsExtractor.JsEngine.JavaScriptEngineSwitcher](https://www.nuget.org/packages/YouTubeStreamsExtractor.JsEngine.JavaScriptEngineSwitcher) | javascript engine, .NET 8 Library |
-| [![Nuget](https://img.shields.io/nuget/v/YouTubeStreamsExtractor.JsEngine.AndroidWebView)](https://www.nuget.org/packages/YouTubeStreamsExtractor.JsEngine.AndroidWebView) | [YouTubeStreamsExtractor.JsEngine.AndroidWebView](https://www.nuget.org/packages/YouTubeStreamsExtractor.JsEngine.AndroidWebView) | javascript engine, .NET 8 Android Library |
+| [![Nuget](https://img.shields.io/nuget/v/YouTubeStreamsExtractor)](https://www.nuget.org/packages/YouTubeStreamsExtractor) | [YouTubeStreamsExtractor](https://www.nuget.org/packages/YouTubeStreamsExtractor) | .NET 9 Library |
+| [![Nuget](https://img.shields.io/nuget/v/YouTubeStreamsExtractor.JsEngine.JavaScriptEngineSwitcher)](https://www.nuget.org/packages/YouTubeStreamsExtractor.JsEngine.JavaScriptEngineSwitcher) | [YouTubeStreamsExtractor.JsEngine.JavaScriptEngineSwitcher](https://www.nuget.org/packages/YouTubeStreamsExtractor.JsEngine.JavaScriptEngineSwitcher) | javascript engine, .NET 9 Library |
+| [![Nuget](https://img.shields.io/nuget/v/YouTubeStreamsExtractor.JsEngine.AndroidWebView)](https://www.nuget.org/packages/YouTubeStreamsExtractor.JsEngine.AndroidWebView) | [YouTubeStreamsExtractor.JsEngine.AndroidWebView](https://www.nuget.org/packages/YouTubeStreamsExtractor.JsEngine.AndroidWebView) | javascript engine, .NET 9 Android Library |
 
 ## Usage
 
